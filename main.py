@@ -105,7 +105,7 @@ if __name__ == '__main__':
             print('Translating Passage {}'.format(trans_cnt), end=', ')
         ot_buf += line
         # for beginning with special char, restore line break
-        if tr_buf != '' and (not line[0].isalnum()) and (tr_buf[-1] == ' '):
+        if tr_buf != '' and (not line[0].isalnum() and not line[0] in "'`\"") and (tr_buf[-1] == ' '):
             tr_buf = tr_buf[:-1] + '\n'
         tr_buf += line
         if tr_buf[-1] == '\n':
