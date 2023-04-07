@@ -16,6 +16,14 @@ Original Text
 
 ## 使用方法
 
+首先安装依赖库：
+
+```shell
+pip install -r requirements.txt
+```
+
+安装依赖后即可使用：
+
 ```shell
 python main.py -i [ipath] -o [opath] -p [proxy]
 ```
@@ -24,3 +32,5 @@ python main.py -i [ipath] -o [opath] -p [proxy]
 - `-p [proxy]`：（可选）指定代理地址，其中 `[proxy]` 为代理地址，形如 `a.b.c.d:e` 或 `protocol://a.b.c.d:e`。**不指定时请确保可以直连 https://translate.google.com/ 。**
 
 亦支持长参数。如需了解请参阅源代码，在此不进行赘述。
+
+我使用的 Python 版本为 3.10.5。
