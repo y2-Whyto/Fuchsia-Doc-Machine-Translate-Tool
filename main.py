@@ -103,6 +103,7 @@ if __name__ == '__main__':
             continue
         if ot_buf == '':
             print('Translating Passage {}'.format(trans_cnt), end=', ')
+            t1 = time()
         ot_buf += line
         # for beginning with special char, restore line break
         if tr_buf != '' and (not line[0].isalnum() and not line[0] in "'`\"") and (tr_buf[-1] == ' '):
