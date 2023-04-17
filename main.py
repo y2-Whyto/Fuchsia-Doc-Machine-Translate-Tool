@@ -43,7 +43,7 @@ def is_note(line: str, pos: int, check_path=False) -> bool:
             pos += 1
         if pos + 2 < len(line) and line[pos:pos + 3] == ']: ':
             if check_path:
-                if pos + 3 < len(line) and line[pos + 3] == '/':
+                if pos + 3 < len(line) and line[pos + 3] in ('/', '.', 'h'):
                     return True
                 else:
                     return False
