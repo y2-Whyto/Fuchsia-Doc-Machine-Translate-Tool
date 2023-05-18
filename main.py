@@ -1,8 +1,10 @@
 import os
 import sys
+import re
 import getopt
 from time import time
-from googletrans import Translator  # !!googletrans-py, instead of googletrans!!
+# from googletrans import Translator  # !!googletrans-py, instead of googletrans!!
+from crawl import translate
 
 
 def process_trans(translated: str) -> str:
@@ -22,8 +24,9 @@ def process_trans(translated: str) -> str:
 def trans_write(ot_buf: str, tr_buf: str) -> None:
     if tr_buf[-1] == ' ':
         tr_buf = tr_buf[:-1]
-    translation = translator.translate(tr_buf, src='en', dest='zh-cn')
-    translated = translation.text
+    # translation = translator.translate(tr_buf, src='en', dest='zh-cn')
+    # translated = translation.text
+    translated = translate(tr_buf, text_language='en', to_language='zh-CN')
     if translated == '' and tr_buf != '':
         print('Translation Exception: Empty Result (Currently at Passage {})'.format(trans_cnt))
         print('Original text:')
@@ -131,7 +134,7 @@ if __name__ == '__main__':
         print('Proxy unset. If there\'s empty translation, please check\n'
               'your connection to https://translate.google.com/')
 
-    translator = Translator(service_urls=['translate.google.com', ], proxies=proxies)
+    # translator = Translator(service_urls=['translate.google.com', ], proxies=proxies)
 
     # Deal with files
     fi = open(input_path, 'r')
@@ -181,7 +184,7 @@ if __name__ == '__main__':
                 ref_area = False
 
         # Deal with html comments
-        if line.startswith('<!--'):
+        if re.match(r'^\s*<!--', line) is not None:
             if not comment_area:
                 comment_area = True
                 print('Skipping Comment {}'.format(comment_cnt), end=', ')
@@ -208,7 +211,7 @@ if __name__ == '__main__':
                 print('Comment Area Exception')
 
         # Deal with code blocks wrapped in "```"
-        if line.startswith('```'):
+        if re.match(r'^\s*```', line) is not None:
             if not code_area:
                 code_area = True
                 print('Skipping Code Block {}'.format(code_cnt), end=', ')
@@ -238,6 +241,19 @@ if __name__ == '__main__':
                 ref_cnt += 1
                 t1 = time()
             fo.write(line)
+            continue
+
+        # Deal with passage that doesn't need translating
+        if re.match(r'\s*\*\s+\{.+}\s*', line) is not None:
+            if tr_buf != '':
+                trans_write(ot_buf, tr_buf)
+                trans_cnt += 1
+                ot_buf = ''
+                tr_buf = ''
+            print('Skipping Passage {}'.format(trans_cnt), end=', ')
+            t1 = time()
+            fo.write(line)
+            print('Time elapsed: {:.2f} secs'.format(time() - t1))
             continue
 
         # Normal lines
